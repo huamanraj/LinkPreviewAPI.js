@@ -4,5 +4,17 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(),],
+  server: {
+    headers: {
+      'Content-Type': 'application/javascript',
+    },
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        format: 'es',
+      },
+    },
+  },
 })
