@@ -1,0 +1,34 @@
+{
+  "name": "linksight-preview-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "endpoints": "node scripts/printEndpoints.js"
+  },
+  "keywords": [
+    "link",
+    "preview",
+    "api",
+    "metadata",
+    "og-tags"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "API service for generating link previews with rate limiting",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "meta-fetcher": "^3.1.1",
+    "mongoose": "^8.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
