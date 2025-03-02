@@ -6,15 +6,16 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss(),],
   server: {
-    headers: {
-      'Content-Type': 'application/javascript',
-    },
+    port: 3000,
+    strictPort: true,
   },
   build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
     rollupOptions: {
       output: {
-        format: 'es',
-      },
-    },
-  },
+        manualChunks: undefined
+      }
+    }
+  }
 })
