@@ -3,42 +3,51 @@ const cors = require('cors');
 const customCors = (req, res, next) => {
   const allowedOrigins = [
     'https://linkpreviewapi.amanraj.me',
-    'https://linkpreviewapijs.amanraj.me'
-  ];
-  
-  // For development purposes (optional - remove in production)
-  const devOrigins = [
-    'http://localhost:3000', 
+    'https://linkpreviewapijs.amanraj.me',
     'http://localhost:5173', 
+    'http://localhost:3000', 
     'http://127.0.0.1:5173', 
     'http://127.0.0.1:3000'
   ];
   
-  // Combine origins for development (in production, you might want to remove devOrigins)
-  const validOrigins = [...allowedOrigins, ...devOrigins];
+  // Set CORS headers for preflight requests
+  res.header('Access-Control-Allow-Origin', req.headers.origin);
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-api-key');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // Handle OPTIONS preflight requests
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
-  // Check if it's the /api/preview endpoint
-  if (req.path === '/api/preview') {
-    // Allow any origin for the preview endpoint
-    cors()(req, res, next);
-  } else {
-    // For all other routes, restrict to allowed origins
-    cors({
-      origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps, curl requests)
-        if (!origin) return callback(null, true);
-        
-        if (validOrigins.indexOf(origin) !== -1) {
-          callback(null, true);
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      },
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  // For the preview endpoint, allow any origin
+  if (req.path === '/api/preview' || req.originalUrl === '/api/preview') {
+    return cors({
+      origin: true, // Allow any origin
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
-      credentials: true
     })(req, res, next);
   }
+
+  // For other endpoints, only allow specific origins
+  return cors({
+    origin: function (origin, callback) {
+      // Allow server-to-server requests (no origin)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        // Instead of throwing an error, send a proper CORS response
+        callback(new Error(`Origin ${origin} not allowed by CORS`));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key'],
+  })(req, res, next);
 };
 
 module.exports = customCors;

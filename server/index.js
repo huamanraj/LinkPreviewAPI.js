@@ -24,6 +24,24 @@ app.get('/', (req, res) => {
   res.send('LinkPreview API Service is running');
 });
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  
+  // Specifically handle CORS errors
+  if (err.message.includes('CORS')) {
+    return res.status(403).json({
+      status: 'error',
+      message: 'CORS error: Origin not allowed'
+    });
+  }
+  
+  res.status(500).json({
+    status: 'error',
+    message: 'Internal Server Error'
+  });
+});
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
